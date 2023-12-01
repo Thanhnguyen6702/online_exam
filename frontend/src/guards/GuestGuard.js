@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // hooks
 import useAuth from '../hooks/useAuth';
 
-// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 GuestGuard.propTypes = {
   children: PropTypes.node

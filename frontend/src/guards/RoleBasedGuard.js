@@ -4,7 +4,7 @@ import { Container, Alert, AlertTitle } from '@mui/material';
 import useAuth from '../hooks/useAuth';
 // components
 import LoadingScreen from '../components/LoadingScreen';
-// ----------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 RoleBasedGuard.propTypes = {
   accessibleRoles: PropTypes.array, // Example ['admin', 'leader']
