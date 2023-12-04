@@ -10,5 +10,3 @@ export * from './actions';
 export * from './container';
 export * from './transition';
 export * from './background';
-export * from './background';
-export * from './bounce';
