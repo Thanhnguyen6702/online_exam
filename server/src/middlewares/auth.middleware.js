@@ -1,31 +1,61 @@
-const passport = require('passport');
-const httpStatus = require('http-status');
-const ApiError = require('../utils/ApiError');
-const { roleRights } = require('../configs/roles');
+const httpStatus = require("http-status");
+const catchAsync = require("../utils/catchAsync");
+const logger = require("../configs/logger");
+const ApiError = require("../utils/ApiError");
 
-const verifyCallback = (req, resolve, reject, requiredRights) => async (err, user, info) => {
-  if (err || info || !user) {
-    return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
-  }
-  req.user = user;
+const jwt = require("jsonwebtoken");
 
-  if (requiredRights.length) {
-    const userRights = roleRights.get(user.role);
-    const hasRequiredRights = requiredRights.every((requiredRight) => userRights.includes(requiredRight));
-    if (!hasRequiredRights && req.params.userId !== user.id) {
-      return reject(new ApiError(httpStatus.FORBIDDEN, 'Forbidden'));
+const auth = catchAsync(async (req, res, next) => {
+  const token = req.headers["x-access-token"];
+  if (token) {
+    try {
+      req.user = jwt.verify(token, process.env.TOKEN_KEY);
+      if (["admin", "mod"].includes(req.user.role)) req.user.isStaff = true;
+    } catch (error) {
+      logger.error(error);
+      throw new ApiError(httpStatus.FORBIDDEN, "INVALID TOKEN");
     }
   }
+  next();
+});
 
-  resolve();
-};
+const adminRequire = catchAsync(async (req, res, next) => {
+  const token = req.headers["x-access-token"];
+  if (token) {
+    try {
+      req.user = jwt.verify(token, process.env.TOKEN_KEY);
+      if (req.user.role == "admin") return next();
+    } catch (error) {
+      logger.error(error);
+    }
+  }
+  throw new ApiError(httpStatus.UNAUTHORIZED, "ADMIN REQUIRED");
+});
 
-const auth = (...requiredRights) => async (req, res, next) => {
-  return new Promise((resolve, reject) => {
-    passport.authenticate('jwt', { session: false }, verifyCallback(req, resolve, reject, requiredRights))(req, res, next);
-  })
-    .then(() => next())
-    .catch((err) => next(err));
-};
+const staffRequire = catchAsync(async (req, res, next) => {
+  const token = req.headers["x-access-token"];
+  if (token) {
+    try {
+      req.user = jwt.verify(token, process.env.TOKEN_KEY);
+      if (["admin", "mod"].includes(req.user.role)) return next();
+    } catch (error) {
+      logger.error(error);
+    }
+  }
+  throw new ApiError(httpStatus.UNAUTHORIZED, "STAFF REQUIRE");
+});
 
-module.exports = auth;
+const authRequire = catchAsync(async (req, res, next) => {
+  const token = req.headers["x-access-token"];
+  if (token) {
+    try {
+      req.user = jwt.verify(token, process.env.TOKEN_KEY);
+      return next();
+    } catch (error) {
+      logger.error(error);
+    }
+  }
+  throw new ApiError(httpStatus.UNAUTHORIZED, "UNAUTHORIZED");
+});
+
+module.exports = { auth, adminRequire, authRequire, staffRequire };

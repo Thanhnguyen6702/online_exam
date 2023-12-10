@@ -37,6 +37,10 @@ const deleteQuestion = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const getQuestionsWithCriterias = catchAsync(async (req, res) => {
+  const results = await questionService.queryQuestionsWithCriterias(req.body);
+  res.status(httpStatus.OK).send(results);
+});
 
 const createQuestions = catchAsync(async (req, res) => {
   const questions = await questionService.createQuestions(req.body)
@@ -50,5 +54,5 @@ module.exports = {
   getQuestion,
   updateQuestion,
   deleteQuestion,
-
+  getQuestionsWithCriterias,
 };

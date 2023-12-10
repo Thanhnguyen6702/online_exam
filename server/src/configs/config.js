@@ -5,7 +5,7 @@ const sanitizeRedisUrl = url => url.replace(/^(redis\:\/\/)/, '');
 
 const envVarsSchema = Joi.object()
   .keys({
-    NODE_ENV: Joi.string().valid('production', 'development', 'test'),
+    NODE_ENV: Joi.string().valid('development'),
     PORT: Joi.number().default(8000),
     MONGODB_URL: Joi.string().required().description('Mongo DB url'),
     REDIS_PORT: Joi.number().default(6379),
@@ -34,5 +34,13 @@ module.exports = {
       useUnifiedTopology: true,
     },
   },
-  
+  redis: {
+    endpointUri: envVars.REDIS_ENDPOINT_URI
+      ? sanitizeRedisUrl(envVars.REDIS_ENDPOINT_URI)
+      : `${sanitizeRedisUrl(envVars.REDIS_HOST)}:${envVars.REDIS_PORT}`
+      ,
+    password: envVars.REDIS_PASSWORD || undefined
+  },
+  managementAppUrl: envVars.MANAGEMENT_APP_URL,
+  shopAppUrl: envVars.SHOP_APP_URL,
 };
