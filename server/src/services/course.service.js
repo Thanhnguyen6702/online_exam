@@ -28,3 +28,26 @@ const queryCourses = async (filter, options) => {
   const courses = await Course.paginate(filter, options);
   return courses;
 };
+
+/**
+ * Get course by id
+ * @param {ObjectId} id
+ * @returns {Promise<Course>}
+ */
+const getCourseById = async (id, options) => {
+    let coursePromise = Course.findById(id);
+    if (options?.populate) {
+      options.populate.split(',').forEach((populateOption) => {
+        coursePromise = coursePromise.populate(
+          populateOption
+            .split('.')
+            .reverse()
+            .reduce((a, b) => ({ path: b, populate: a }))
+        );
+      });
+    }
+  
+    coursePromise = coursePromise.exec();
+  
+    return coursePromise;
+  };
