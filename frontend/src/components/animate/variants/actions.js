@@ -3,4 +3,5 @@
     hover: {
       scale: scale || 1.1
     }
-  });
+  }
+  );

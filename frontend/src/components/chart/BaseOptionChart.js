@@ -6,14 +6,7 @@ import { useTheme } from '@mui/material/styles';
 export default function BaseOptionChart() {
   const theme = useTheme();
 
-  const LABEL_TOTAL = {
-    show: true,
-    label: 'Total',
-    color: theme.palette.text.secondary,
-    fontSize: theme.typography.subtitle2.fontSize,
-    fontWeight: theme.typography.subtitle2.fontWeight,
-    lineHeight: theme.typography.subtitle2.lineHeight,
-  };
+  
 
   const LABEL_VALUE = {
     offsetY: 8,
@@ -24,52 +17,7 @@ export default function BaseOptionChart() {
   };
 
   return {
-    // Colors
-    colors: [
-      theme.palette.primary.main,
-      theme.palette.chart.yellow[0],
-      theme.palette.chart.blue[0],
-      theme.palette.chart.violet[0],
-      theme.palette.chart.green[0],
-      theme.palette.chart.red[0],
-    ],
-
-    // Chart
-    chart: {
-      toolbar: { show: false },
-      zoom: { enabled: false },
-      // animations: { enabled: false },
-      foreColor: theme.palette.text.disabled,
-      fontFamily: theme.typography.fontFamily,
-    },
-
-    // States
-    states: {
-      hover: {
-        filter: {
-          type: 'lighten',
-          value: 0.04,
-        },
-      },
-      active: {
-        filter: {
-          type: 'darken',
-          value: 0.88,
-        },
-      },
-    },
-
-    // Fill
-    fill: {
-      opacity: 1,
-      gradient: {
-        type: 'vertical',
-        shadeIntensity: 0,
-        opacityFrom: 0.4,
-        opacityTo: 0,
-        stops: [0, 100],
-      },
-    },
+    
 
     // Datalabels
     dataLabels: { enabled: false },
