@@ -69,3 +69,67 @@ const getCourseKey = async (courseId) => {
     const key = course.getKey();
     return key;
 }
+
+/**
+ * Update course by id
+ * @param {ObjectId} courseId
+ * @param {Object} updateBody
+ * @returns {Promise<Course>}
+ */
+const updateCourseById = async (courseId, updateBody) => {
+    const course = await getCourseById(courseId);
+    if (!course) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Course not found');
+    }
+    Object.assign(course, updateBody);
+    console.log(course);
+    await course.save();
+    return course;
+};
+
+/**
+ * Delete course by id
+ * @param {ObjectId} courseId
+ * @returns {Promise<Course>}
+ */
+const deleteCourseById = async (courseId) => {
+    const course = await getCourseById(courseId);
+    if (!course) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Course not found');
+    }
+    await AnswerSheet.deleteMany({ courseId });
+    await course.remove();
+    return course;
+};
+
+const getResultTableById = async (courseId, userId) => {
+    const course = await getCourseById(courseId, { populate: "questions" });
+    if (!course) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Course not found');
+    }
+    const key = course.getKey();
+    const sheetFilter = { courseId: courseId }
+    if (userId) sheetFilter.user = userId;
+    const { results: sheets } = await answerSheetService.queryAnswerSheets(sheetFilter, { populate: "user", limit: 1000 });
+    const results = sheets.map(sheet => {
+        sheet = sheet.toJSON();
+        const result = pick(sheet, ['createdAt', 'updatedAt', 'finishedAt', 'id', 'blurCount']);
+        // result.id = result._id;
+        result.user = pick(sheet.user, ['displayName', 'photoURL', 'email', 'id']);
+        result.trueCount = sheet.choices.filter(c => key.includes(c.choiceId.toString())).length;
+        result.mark = result.trueCount / course.questions.length * 10;
+        return result;
+    })
+    return results;
+}
+
+module.exports = {
+    createCourse,
+    queryCourses,
+    getCourseById,
+    getCourseKey,
+    getCourseByEmail,
+    updateCourseById,
+    deleteCourseById,
+    getResultTableById,
+};
