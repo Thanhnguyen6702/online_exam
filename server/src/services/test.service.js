@@ -79,3 +79,68 @@ const getTestKey = async (testId) => {
     const key = test.getKey();
     return key;
 }
+
+/**
+ * Update test by id
+ * @param {ObjectId} testId
+ * @param {Object} updateBody
+ * @returns {Promise<Test>}
+ */
+const updateTestById = async (testId, updateBody) => {
+    const test = await getTestById(testId);
+    if (!test) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Test not found');
+    }
+    Object.assign(test, updateBody);
+    console.log(test);
+    await test.save();
+    return test;
+};
+
+/**
+ * Delete test by id
+ * @param {ObjectId} testId
+ * @returns {Promise<Test>}
+ */
+const deleteTestById = async (testId) => {
+    const test = await getTestById(testId);
+    if (!test) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Test not found');
+    }
+    await AnswerSheet.deleteMany({ testId });
+    await test.remove();
+    return test;
+};
+
+const getResultTableById = async (testId, userId) => {
+    const test = await getTestById(testId, { populate: "questions" });
+    if (!test) {
+        return test;
+    }
+    const key = test.getKey();
+    const sheetFilter = { testId: testId }
+    if (userId) sheetFilter.user = userId;
+    const { results: sheets } = await answerSheetService.queryAnswerSheets(sheetFilter, { populate: "user", limit: 1000 });
+    const results = sheets.map(sheet => {
+        sheet = sheet.toJSON();
+        const result = pick(sheet, ['createdAt', 'updatedAt', 'finishedAt', 'id', 'blurCount']);
+        // result.id = result._id;
+        result.user = pick(sheet.user, ['displayName', 'photoURL', 'email', 'id']);
+        result.trueCount = sheet.choices.filter(c => key.includes(c.choiceId.toString())).length;
+        result.mark = result.trueCount / test.questions.length * 10;
+        return result;
+    })
+    return results;
+}
+
+module.exports = {
+    createTest,
+    queryTests,
+    getTestById,
+    getTestKey,
+    getTestByEmail,
+    updateTestById,
+    deleteTestById,
+    getResultTableById,
+    detectNullTests,
+};
