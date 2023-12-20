@@ -58,7 +58,7 @@ const getCourseById = async (id, options) => {
  * @returns {Promise<Course>}
  */
 const getCourseByEmail = async (email) => {
-    return Course.find({ email });
+    return Course.findOne({ email });
 };
 
 const getCourseKey = async (courseId) => {
