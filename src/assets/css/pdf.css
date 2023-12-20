@@ -1,0 +1,58 @@
+@page {
+    size: A4;
+    margin: 1cm;
+}
+
+@media print {
+    .container {
+        padding: 20px;
+        page-break-after: always;
+    }
+    .not-break-inside {
+        page-break-inside: avoid;
+    }
+}
+
+
+/* Styles go here */
+
+.page-header,
+.page-header-space {
+    height: 30px;
+}
+
+.page-footer,
+.page-footer-space {
+    height: 30px;
+}
+
+.page-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.page-header {
+    position: fixed;
+    top: 0mm;
+    width: 100%;
+}
+
+.page {
+    page-break-after: always;
+}
+
+@media print {
+    thead {
+        display: table-header-group;
+    }
+    tfoot {
+        display: table-footer-group;
+    }
+    button {
+        display: none;
+    }
+    body {
+        margin: 0;
+    }
+}
