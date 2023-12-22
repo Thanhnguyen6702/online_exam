@@ -115,7 +115,7 @@ const deleteTestById = async (testId) => {
 const getResultTableById = async (testId, userId) => {
     const test = await getTestById(testId, { populate: "questions" });
     if (!test) {
-        return test;
+        throw new ApiError(httpStatus.NOT_FOUND, 'Test not found');
     }
     const key = test.getKey();
     const sheetFilter = { testId: testId }
