@@ -103,6 +103,7 @@ const queryQuestionsWithCriterias = async (criterias) => {
         const matchedQuestions = await Question.aggregate([
             {
                 $match: {
+                    tags: { $elemMatch: { $regex: criteria.topic, $options: "i" } },
                     level: { $gte: criteria.level - 1, $lte: criteria.level + 1 },
                 },
             },
