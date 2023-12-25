@@ -67,7 +67,7 @@ export default function Login() {
         {mdUp && (
           <SectionStyle>
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Hi, đăng nhập để sử dụng nhiều chức năng của web
+              Nhóm 39- Công nghệ web
             </Typography>
             <Image
               alt="login"
@@ -81,7 +81,7 @@ export default function Login() {
             <Stack direction="row" alignItems="center" sx={{ mb: 5 }}>
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h4" gutterBottom>
-                  {`Đăng nhập vào Web Làm Đề ${PRODUCT_NAME.toUpperCase()} 2.0`}
+                  {`Đăng nhập vào Web Làm Đề`}
                 </Typography>
                 <Typography sx={{ color: 'text.secondary' }}>Đăng nhập để lưu lại kết quả luyện đề, kích hoạt khoá học.</Typography>
               </Box>
@@ -90,7 +90,7 @@ export default function Login() {
                 <>
                   <Image
                     disabledEffect
-                    src={`https://minimals.cc/assets/icons/auth/ic_${method}.png`}
+                    src={`https://cdn-icons-png.flaticon.com/128/2436/2436874.png`}
                     sx={{ width: 32, height: 32 }}
                   />
                 </>
