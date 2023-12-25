@@ -36,7 +36,7 @@ const queryAnswerSheets = async (filter, options) => {
 const getAnswerSheetById = async (id, options) => {
     let answerSheetPromise = AnswerSheet.findOne({ _id: id });
 
-    if (options.populate) {
+    if (options?.populate) {
         options.populate.split(',').forEach((populateOption) => {
             answerSheetPromise = answerSheetPromise.populate(
                 populateOption
